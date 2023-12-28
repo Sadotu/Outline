@@ -4,43 +4,62 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <ImageView
-        android:id="@+id/imageViewSettings"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/mainHeader"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/gear"/>
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/imageViewSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/gear"
+            android:layout_gravity="left"/>
+
+        <TextView
+            android:id="@+id/textViewAsk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ask me anything!"
+            android:textSize="24sp"
+            android:layout_marginTop="100dp"/>
+
+        <Button
+            android:id="@+id/listenButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Listening"
+            android:background="@drawable/btn_standard_selector"
+            android:layout_marginTop="32dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/textViewAsk"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ask me anything!"
-        android:textSize="24sp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"/>
+        android:id="@+id/mainBody"
+        android:layout_width="match_parent"
+        android:layout_below="@id/mainHeader"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Hier komt de tekst..."/>
 
-    <Button
-        android:id="@+id/listenButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start Listening"
-        android:background="@drawable/btn_standard_selector"
-        android:layout_below="@id/textViewAsk"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        />
+        android:layout_below="@id/mainBody"
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <Button
-        android:id="@+id/playButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Play"
-        android:layout_below="@id/listenButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"/>
+        <Button
+            android:id="@+id/playButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
 
 </RelativeLayout>
