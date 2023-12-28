@@ -22,10 +22,10 @@
         android:layout_marginTop="100dp"/>
 
     <Button
-        android:id="@+id/buttonStartListening"
+        android:id="@+id/listenButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start listening"
+        android:text="Start Listening"
         android:background="@drawable/btn_standard_selector"
         android:layout_below="@id/textViewAsk"
         android:layout_centerHorizontal="true"
@@ -35,11 +35,11 @@
         />
 
     <Button
-        android:id="@+id/buttonResetChat"
+        android:id="@+id/playButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reset chat"
-        android:layout_below="@id/buttonStartListening"
+        android:text="Play"
+        android:layout_below="@id/listenButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"/>
 
