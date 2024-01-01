@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/gear"
-            android:layout_gravity="left"/>
+            android:layout_gravity="start"/>
 
         <TextView
             android:id="@+id/textViewAsk"
@@ -43,7 +43,6 @@
         android:layout_width="match_parent"
         android:layout_below="@id/mainHeader"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:text="Hier komt de tekst..."/>
 
     <LinearLayout
@@ -58,7 +57,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Play"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"/>
     </LinearLayout>
 
