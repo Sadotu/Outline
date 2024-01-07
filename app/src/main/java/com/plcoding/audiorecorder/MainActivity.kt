@@ -5,20 +5,18 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.assemblyai.api.AssemblyAI
 import com.plcoding.audiorecorder.playback.AndroidAudioPlayer
 import com.plcoding.audiorecorder.record.AndroidAudioRecorder
-import com.plcoding.audiorecorder.ui.theme.AudioRecorderTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.io.File
+import java.util.Properties
 
 class MainActivity : ComponentActivity() {
 
@@ -40,6 +38,11 @@ class MainActivity : ComponentActivity() {
             arrayOf(Manifest.permission.RECORD_AUDIO),
             0
         )
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.INTERNET),
+            0
+        )
 
         setContentView(R.layout.activity_main)
         val listenButton: Button = findViewById(R.id.listenButton)
@@ -55,6 +58,9 @@ class MainActivity : ComponentActivity() {
                 listenButton.text = "Start Listening"
                 listenButton.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
                 recorder.stop()
+                GlobalScope.launch {
+                    audioFile?.let { it1 -> transcribeAudioAsync(it1) }
+                }
             }
         }
 
@@ -67,6 +73,26 @@ class MainActivity : ComponentActivity() {
                 playButton.text = "Play"
                 player.stop()
             }
+        }
+    }
+
+    private suspend fun transcribeAudioAsync(audioFile: File) {
+        coroutineScope {
+            val apiKey = BuildConfig.ASSEMBLYAI_API_KEY
+
+            val aai = AssemblyAI.builder()
+                .apiKey(apiKey)
+                .build()
+
+            // Launch a new coroutine in the background and continue
+            val transcriptDeferred = async(Dispatchers.IO) {
+                aai.transcripts().transcribe(audioFile)
+            }
+
+            // Wait for the result of the background coroutine
+            val transcript = transcriptDeferred.await()
+
+            println("Received response!${transcript.text}")
         }
     }
 }
