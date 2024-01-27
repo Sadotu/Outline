@@ -3,20 +3,25 @@ package com.plcoding.audiorecorder
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.assemblyai.api.AssemblyAI
+import com.assemblyai.api.RealtimeTranscriber
+import com.assemblyai.api.resources.realtime.types.FinalTranscript
+import com.assemblyai.api.resources.realtime.types.PartialTranscript
+import com.assemblyai.api.resources.transcripts.types.Transcript
 import com.plcoding.audiorecorder.playback.AndroidAudioPlayer
 import com.plcoding.audiorecorder.record.AndroidAudioRecorder
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
-import java.util.Properties
 
 class MainActivity : ComponentActivity() {
 
@@ -58,8 +63,8 @@ class MainActivity : ComponentActivity() {
                 listenButton.text = "Start Listening"
                 listenButton.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
                 recorder.stop()
-                GlobalScope.launch {
-                    audioFile?.let { it1 -> transcribeAudioAsync(it1) }
+                lifecycleScope.launch {
+                    audioFile?.let { it1 -> transcribeAudioFile(it1) }
                 }
             }
         }
@@ -76,8 +81,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private suspend fun transcribeAudioAsync(audioFile: File) {
-        coroutineScope {
+    private suspend fun transcribeAudioFile(audioFile: File): String {
+//        val apiKey = BuildConfig.ASSEMBLYAI_API_KEY
+//
+//        val aai = AssemblyAI.builder()
+//            .apiKey(apiKey)
+//            .build()
+//
+//        val transcript = aai.transcripts().transcribe(audioFile)
+//
+//        return transcript
+
+        return coroutineScope {
             val apiKey = BuildConfig.ASSEMBLYAI_API_KEY
 
             val aai = AssemblyAI.builder()
@@ -91,8 +106,83 @@ class MainActivity : ComponentActivity() {
 
             // Wait for the result of the background coroutine
             val transcript = transcriptDeferred.await()
+            var text = "No transcript returned (yet?)"
 
-            println("Received response!${transcript.text}")
+            if (transcript.text.isPresent) {
+                text = transcript.text.get()
+            }
+
+            Log.d("transcript text", text)
+
+            return@coroutineScope text
         }
+    }
+
+//    private suspend fun transcribeAudioFile(audioFile: File): YourTranscriptType? {
+//        val apiKey = BuildConfig.ASSEMBLYAI_API_KEY
+//
+//        val aai = AssemblyAI.builder()
+//            .apiKey(apiKey)
+//            .build()
+//
+//        var result: YourTranscriptType? = null
+//
+//        return withContext(Dispatchers.IO) {
+//            try {
+//                val response = aai.transcripts().transcribe(audioFile)
+//                if (response is Closeable) {
+//                    response.use {
+//                        // Process and store the result
+//                        result = it // Assuming 'it' is the transcript
+//                    }
+//                } else {
+//                    // Just process the response
+//                    result = response
+//                }
+//            } catch (e: Exception) {
+//                // Handle exceptions
+//                null
+//            } finally {
+//                // Perform any necessary clean-up
+//                // If you had opened any other resources, close them here
+//            }
+//            result
+//        }
+//    }
+
+    private lateinit var realtimeTranscriber: RealtimeTranscriber
+
+    private fun setupAndStartRealtimeTranscription() {
+        // Initialize the RealtimeTranscriber
+        val realtime = RealtimeTranscriber.builder()
+            .apiKey(BuildConfig.ASSEMBLYAI_API_KEY)
+            .onPartialTranscript { partial: PartialTranscript? ->
+                println(
+                    partial
+                )
+            }
+            .onFinalTranscript { finalTranscript: FinalTranscript? ->
+                println(
+                    finalTranscript
+                )
+            }
+            .build()
+
+        // Start the transcription process
+
+        launchTranscription(realtime)
+    }
+
+    private fun launchTranscription(realtime: RealtimeTranscriber) = lifecycleScope.launch(Dispatchers.IO) {
+        realtime.sendAudio(byteArrayOf())
+    }
+
+    private suspend fun handleTranscript(transcript: PartialTranscript) = withContext(Dispatchers.Main) {
+        // Update UI or handle the transcript on the main thread
+        println("You: $transcript")
+    }
+
+    private fun stopRealtimeTranscription() {
+        realtimeTranscriber.close()
     }
 }
