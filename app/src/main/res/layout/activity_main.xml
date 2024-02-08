@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:text="Ask me anything!"
             android:textSize="24sp"
-            android:layout_marginTop="100dp"/>
+            android:layout_marginTop="60dp"/>
 
         <Button
             android:id="@+id/listenButton"
@@ -38,25 +38,58 @@
             />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/mainBody"
+    <View
+        android:id="@+id/shadowLineTop"
         android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/line"
         android:layout_below="@id/mainHeader"
-        android:layout_height="0dp"
-        android:text="Hier komt de tekst..."/>
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/yourTranscription"
+        android:layout_width="match_parent"
+        android:layout_height="370dp"
+        android:layout_below="@id/shadowLineTop"
+        android:text="You: "
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:textStyle="bold"
+        android:fontFamily="@font/roboto_black"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/gptAnswer"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_below="@id/shadowLineTop"
+        android:text="You: "
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:textStyle="bold"
+        android:fontFamily="@font/roboto_black"
+        android:textSize="18sp"/>
+
+    <View
+        android:id="@+id/shadowLineBottom"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/line"
+        android:layout_below="@id/yourTranscription"
+        android:layout_marginTop="8dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/mainBody"
+        android:layout_below="@id/shadowLineBottom"
         android:orientation="vertical"
         android:gravity="center">
 
         <Button
-            android:id="@+id/playButton"
+            android:id="@+id/resetButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Play"
+            android:text="Reset"
             android:layout_marginTop="16dp"/>
     </LinearLayout>
 

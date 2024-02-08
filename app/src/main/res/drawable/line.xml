@@ -1,0 +1,9 @@
+<!-- res/drawable/line.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:top="1dp" android:right="1dp" android:left="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#000000"/> <!-- Line color -->
+            <corners android:radius="1dp"/> <!-- Optional: rounded corners -->
+        </shape>
+    </item>
+</layer-list>

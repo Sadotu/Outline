@@ -4,15 +4,20 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.assemblyai.api.RealtimeTranscriber
+import com.assemblyai.api.resources.transcripts.types.TranscriptLanguageCode
+import com.assemblyai.api.resources.transcripts.types.TranscriptOptionalParams
 import com.plcoding.audiorecorder.record.AudioStream
 
 class MainActivity : ComponentActivity() {
 
     private var audioStream: AudioStream? = null
+    private lateinit var yourTranscription: TextView
+    private var lastPartial = "You: "
 
     @SuppressLint("SetTextI18n", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,13 +33,31 @@ class MainActivity : ComponentActivity() {
             0
         )
 
+        var params = TranscriptOptionalParams.builder()
+            .languageCode(TranscriptLanguageCode.NL)
+            .build();
+
         setContentView(R.layout.activity_main)
+        yourTranscription = findViewById(R.id.yourTranscription)
         val apiKey = BuildConfig.ASSEMBLYAI_API_KEY
         val realtimeTranscriber: RealtimeTranscriber = RealtimeTranscriber.builder()
             .apiKey(apiKey)
             .sampleRate(16000)
-            .onPartialTranscript { partial ->  println(partial.text) }
-            .onFinalTranscript { finalTranscript ->  println(finalTranscript.text) }
+
+            .onPartialTranscript { partial ->
+                val newWords = partial.text.removePrefix(lastPartial)
+                lastPartial = partial.text
+                runOnUiThread {
+                    yourTranscription.append(newWords)
+                }
+            }
+            .onFinalTranscript { finalTranscript ->
+                runOnUiThread {
+                    yourTranscription.text = "You: " + finalTranscript.text
+                }
+                lastPartial = "You: "
+            }
+
             .onError { error -> error.printStackTrace() }
             .build()
 
